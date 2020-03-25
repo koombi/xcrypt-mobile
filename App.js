@@ -1,45 +1,59 @@
-import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, Button, TextInput, View } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Button, TextInput, View } from 'react-native';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' + 'Shake or press menu button for dev menu',
-});
+import { encrypt, decrypt } from './libs/xcrypt';
 
-export default class App extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
+export default function App() {
+  const [passwordOrCipher, setPasswordOrCipher] = useState('');
+  const [masterKey, setMasterKey] = useState('');
+
+  const _encrypt = () => setPasswordOrCipher(encrypt(passwordOrCipher, masterKey));
+
+  const _decrypt = () => setPasswordOrCipher(decrypt(passwordOrCipher, masterKey));
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.passwordOrCipherContainer} >
         <TextInput
-          style={{height: 40}}
-          placeholder="Put your text here."
+          style={styles.passwordOrCipher}
+          placeholder="Password or Ciper"
+          onChangeText={str => setPasswordOrCipher(str)}
+          value={passwordOrCipher}
+          multiline={true}
         />
-        <TextInput
-          style={{height: 40}}
-          placeholder="Put your text here."
-        />
-        <Button title="Encrypt" />
-        <Button title="Decrypt" />
       </View>
-    );
-  }
+      <TextInput
+        style={{height: 40}}
+        placeholder="Master key."
+        secureTextEntry={true}
+        onChangeText={key => setMasterKey(key)}
+        value={masterKey}
+      />
+      <Button title="Encrypt" onPress={_encrypt} />
+      <Button title="Decrypt" onPress={_decrypt} />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    width: '100%',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  passwordOrCipherContainer: {
+    borderColor: '#ccc',
+    borderWidth: 1,
+    width: '98%',
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  passwordOrCipher: {
+    margin: 15,
+    height: 50,
+    width: '98%',
+    borderColor: '#7a42f4',
+    borderWidth: 1,
+    justifyContent: "flex-start",
   },
 });
